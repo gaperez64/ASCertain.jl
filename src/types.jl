@@ -43,7 +43,7 @@ end
 function setup_certproblem(mpQP;normalize=true)
     isQP = hasfield(typeof(mpQP),:H) && !isempty(mpQP.H) && norm(mpQP.H) > 1e-14
     if(isQP) # QP 
-        R = cholesky((mpQP.H+mpQP.H')/2)
+        R = cholesky((mpQP.H+mpQP.H')/2, Val(true); check=false)
         M = mpQP.A/R.U
         V = (R.L)\[mpQP.f_theta mpQP.f]
         d = [mpQP.W mpQP.b] + M*V
