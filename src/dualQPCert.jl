@@ -335,9 +335,9 @@ function spawn_region(region::Region, i::Int64, Ath::Matrix{Float64}, bth::Vecto
     else # remove 
         region_remove_constraint(abs(i),region,new_region,prob,p̂)
     end
-    println(size(Ath))
-    println(size(bth))
-    S = Ath \ bth;
+    # println(size(Ath))
+    # println(size(bth))
+    S = Ath' \ bth;
     println(S[end-ips+1:end]);
     # Update parent
     new_region.ASs[:, 1:end-1] = region.ASs;
