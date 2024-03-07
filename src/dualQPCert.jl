@@ -97,7 +97,7 @@ function cert_add_constraint(prob::CertProblem,region::Region,opts::CertSettings
         end
         # Check if Θᵢ ≂̸ ∅
         if(k>=0 && isfeasible(ws.DAQP_workspace, ws.m+k, 0))
-            new_region=spawn_region(region,ind_cands[i],Ath_tmp[:,1:k],bth_tmp[1:k],Float64[],prob);
+            new_region=spawn_region(region,ind_cands[i],Ath_tmp[:,1:k],bth_tmp[1:k],Float64[],prob,opts.init_params);
             push!(partition,new_region);
         end
     end
@@ -211,7 +211,7 @@ function cert_remove_constraint(prob::DualCertProblem,region::Region,opts::CertS
 
             # Check if Θᵢ≂̸ ∅
             if(isfeasible(ws.DAQP_workspace, ws.m+k, 0))
-                new_region = spawn_region(region,-i,Ath_tmp[:,1:k],bth_tmp[1:k],Float64[],prob);
+                new_region = spawn_region(region,-i,Ath_tmp[:,1:k],bth_tmp[1:k],Float64[],prob,opts.init_params);
                 push!(partition,new_region);
             end
         end
@@ -288,7 +288,7 @@ function cert_remove_constraint(prob::DualCertProblem,region::Region,opts::CertS
 
             # Check if Θᵢ≂̸ ∅
             if(isfeasible(ws.DAQP_workspace, ws.m+k,0))
-                new_region = spawn_region(region,-i,Ath_tmp[:,1:k],bth_tmp[1:k],p̂,prob);
+                new_region = spawn_region(region,-i,Ath_tmp[:,1:k],bth_tmp[1:k],p̂,prob,opts.init_params);
                 push!(partition,new_region);
             end
         end
@@ -318,7 +318,7 @@ function cert_remove_constraint(prob::DualCertProblem,region::Region,opts::CertS
     return nothing 
 end
 ## Spawn region
-function spawn_region(region::Region, i::Int64, Ath::Matrix{Float64}, bth::Vector{Float64}, p̂, prob::DualCertProblem)
+function spawn_region(region::Region, i::Int64, Ath::Matrix{Float64}, bth::Vector{Float64}, p̂, prob::DualCertProblem, ips::Int64)
     n_active = length(region.AS);
     new_region=Region(region.IS[:], region.AS[:],
                       Ath,bth, REMOVE,region.iter+1,
@@ -335,6 +335,8 @@ function spawn_region(region::Region, i::Int64, Ath::Matrix{Float64}, bth::Vecto
     else # remove 
         region_remove_constraint(abs(i),region,new_region,prob,p̂)
     end
+    S = Ath \ bth;
+    println(S[end-ips+1:end)
     # Update parent
     new_region.ASs[:, 1:end-1] = region.ASs;
     new_region.ASs[:,end]=.~region.IS;

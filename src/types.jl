@@ -141,6 +141,7 @@ Base.@kwdef mutable struct CertSettings
     compute_chebyball::Bool = false
     store_regions::Bool = true
     minrep_regions::Bool = false
+    init_params::Int64 = 0
 end
 
 mutable struct CertWorkspace
